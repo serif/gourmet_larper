@@ -1,14 +1,14 @@
-# 🛡️ Chrome Extension Malware Scanner
+# 🛡️ Chrome-Based Browser Extension Malware Scanner
 
 > **⚠️ SECURITY ALERT**: Scan your Mac for ShadyPanda malware extensions
 
-A simple tool to scan your Mac's Chrome extensions directory for malicious extensions from the ShadyPanda campaign that infected 4.3 million browsers.
+A simple tool to scan your Mac's Chrome-based browser extensions for malicious extensions from the ShadyPanda campaign that infected 4.3 million browsers.
 
-**Platform:** macOS | **Language:** Go | **Scans for:** 27 malicious extensions
+**Supported Browsers:** Chrome, Brave | **Platform:** macOS | **Language:** Go | **Scans for:** 27 malicious extensions
 
 ## ⚡ Quick Check
 
-**Have Chrome on your Mac?** Run this scanner to check if you're infected.
+**Have Chrome or Brave on your Mac?** Run this scanner to check if you're infected.
 
 **Takes less than 5 seconds** and requires no technical knowledge.
 
@@ -75,23 +75,26 @@ In Terminal (make sure you're in the gourmet_larper folder), run:
 go run main.go
 ```
 
-The scanner will check your Chrome extensions and display the results.
+The scanner will automatically detect and check all Chrome and Brave browser profiles, then display the results.
 
 ### What You'll See
 
 **If your system is clean:**
 
 ```
-🔍 Scanning Chrome extensions for ShadyPanda malware...
+🔍 Scanning browser extensions for ShadyPanda malware...
 =============================================================
-📂 Checking directory: /Users/yourname/Library/Application Support/Google/Chrome/Default/Extensions
+Scan Summary:
+  • Chrome: 1 profile(s)
+  • Brave: 2 profile(s)
 
-📊 Total Chrome extensions found: 5
+📊 Total profiles scanned: 3
+📦 Total extensions found: 12
 🛡️  Malicious extensions checked: 27
 
 ✅ GOOD NEWS: No malicious extensions detected!
 
-Your Chrome installation appears to be clean from the
+All scanned browser profiles appear to be clean from the
 ShadyPanda malware campaign extensions.
 ```
 
@@ -101,14 +104,15 @@ ShadyPanda malware campaign extensions.
 ⚠️  ALERT: MALICIOUS EXTENSIONS DETECTED!
 =============================================================
 
-🚨 Found 1 malicious extension(s):
+🚨 Browser: Chrome | Profile: Default
+Found 1 malicious extension(s):
 
-1. eagiakjmjnblliacokhcalebgnhellfi (Clean Master)
-   Path: /Users/yourname/Library/.../Extensions/eagiakjmjnblliacokhcalebgnhellfi
+  1. eagiakjmjnblliacokhcalebgnhellfi (Clean Master)
+     Path: /Users/yourname/Library/.../Extensions/eagiakjmjnblliacokhcalebgnhellfi
 
 ⚡ RECOMMENDED ACTIONS:
-  1. Remove these extensions immediately from Chrome
-  2. Go to chrome://extensions in your browser
+  1. Remove these extensions immediately from your browser
+  2. Go to chrome://extensions (Chrome) or brave://extensions (Brave)
   3. Enable 'Developer mode' to see extension IDs
   4. Remove any extensions matching the IDs above
   5. Change your passwords across all accounts
@@ -129,23 +133,26 @@ This creates a program called `chrome-scanner` that you can run with `./chrome-s
 
 ## What It Does
 
-1. Locates your Chrome extensions directory at:
-   ```
-   ~/Library/Application Support/Google/Chrome/Default/Extensions
-   ```
+1. Automatically detects Chrome-based browsers (Chrome and Brave) installed on your Mac
 
-2. Scans all installed extensions
+2. Locates all browser profiles for each detected browser:
+   - Chrome: `~/Library/Application Support/Google/Chrome/`
+   - Brave: `~/Library/Application Support/BraveSoftware/Brave-Browser/`
 
-3. Compares extension IDs against the known malicious list
+3. Scans all installed extensions across all profiles
 
-4. Reports any matches with full paths
+4. Compares extension IDs against the known malicious list
+
+5. Reports any matches with full paths, organized by browser and profile
 
 ## If Malware Is Found
 
 If the scanner detects malicious extensions:
 
-1. **Remove immediately** from Chrome
-2. Visit `chrome://extensions` in your browser
+1. **Remove immediately** from the affected browser
+2. Visit extensions page in your browser:
+   - Chrome: `chrome://extensions`
+   - Brave: `brave://extensions`
 3. Enable "Developer mode" to see extension IDs
 4. Remove any extensions matching the detected IDs
 5. **Change all your passwords** (the extensions may have stolen credentials)
@@ -172,14 +179,11 @@ brew install git
 brew install go
 ```
 
-### "Chrome extensions directory not found"
+### "No supported browsers found"
 
-This means:
-- Chrome is not installed on your Mac, OR
-- You haven't opened Chrome yet, OR
-- Chrome is installed but hasn't created the extensions directory
+This means neither Chrome nor Brave is installed on your Mac, or they haven't been run yet.
 
-Solution: Open Chrome at least once, then run the scanner again.
+Solution: Open Chrome or Brave at least once to initialize the browser directories, then run the scanner again.
 
 ### "Permission denied" when running ./chrome-scanner
 
@@ -221,18 +225,19 @@ go build -o chrome-scanner main.go
 
 ## Limitations
 
-- Only scans the Default Chrome profile (not other Chrome profiles)
-- Does not scan Edge, Brave, or other Chromium browsers
-- Requires Chrome to have been run at least once
+- Only supports Chrome and Brave (not Edge or other Chromium browsers)
+- Requires browsers to have been run at least once to create profile directories
 - Mac only (this version doesn't support Windows or Linux)
 
 ## How It Works
 
 The scanner:
-1. Reads your Chrome extensions folder
-2. Gets the unique ID of each installed extension
-3. Compares those IDs against a hardcoded list of 27 known malicious extension IDs from the ShadyPanda campaign
-4. Reports any matches
+1. Detects Chrome and Brave installations on your Mac
+2. Discovers all profiles within each browser (Default, Profile 1, Profile 2, etc.)
+3. Reads the extensions folder for each profile
+4. Gets the unique ID of each installed extension
+5. Compares those IDs against a hardcoded list of 27 known malicious extension IDs from the ShadyPanda campaign
+6. Reports any matches, organized by browser and profile
 
 No data leaves your computer. This tool only reads local files.
 
@@ -250,11 +255,14 @@ A: Yes. The code is open source and only reads your local Chrome extensions fold
 **Q: Will this slow down my computer?**
 A: No. The scan takes less than 5 seconds and doesn't run in the background.
 
-**Q: What if I use multiple Chrome profiles?**
-A: This scanner only checks the Default profile. You'd need to manually check other profiles or modify the code.
+**Q: What if I use multiple browser profiles?**
+A: The scanner automatically detects and scans all profiles in both Chrome and Brave, including Default, Profile 1, Profile 2, etc.
+
+**Q: What about other Chromium browsers like Edge or Opera?**
+A: Currently only Chrome and Brave are supported. Support for additional browsers could be added in the future.
 
 **Q: Does this work on Windows or Linux?**
-A: No, this version is Mac-only. The Chrome extensions path is different on other operating systems.
+A: No, this version is Mac-only. The browser extensions paths are different on other operating systems.
 
 **Q: The extensions were already removed from Chrome Web Store. Am I safe?**
 A: Not necessarily! If you installed them before they were removed, they may still be on your computer. Run this scanner to check.
