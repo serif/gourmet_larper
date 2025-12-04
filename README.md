@@ -61,7 +61,7 @@ In Terminal, run:
 
 ```bash
 cd ~/Downloads
-git clone https://github.com/YOUR_USERNAME/gourmet_larper.git
+git clone https://github.com/soniah/gourmet_larper.git
 cd gourmet_larper
 ```
 
@@ -207,7 +207,7 @@ If you see version numbers for both, you can skip Step 3 and go straight to Step
 **Quick install and run:**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/gourmet_larper.git
+git clone https://github.com/soniah/gourmet_larper.git
 cd gourmet_larper
 go run main.go
 ```

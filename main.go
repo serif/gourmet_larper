@@ -6,7 +6,8 @@ import (
 	"path/filepath"
 )
 
-// List of known malicious Chrome extension IDs from the ShadyPanda campaign
+const separator = "============================================================="
+
 var maliciousExtensions = []string{
 	"bpgaffohfacaamplbbojgbiicfgedmoi",
 	"cdgonefipacceedbkflolomdegncceid",
@@ -38,95 +39,140 @@ var maliciousExtensions = []string{
 }
 
 func main() {
-	fmt.Println("🔍 Scanning Chrome extensions for ShadyPanda malware...")
-	fmt.Println("=" + string(make([]byte, 60)) + "=")
+	printHeader()
 
-	// Get home directory
-	homeDir, err := os.UserHomeDir()
+	chromeExtensionsDirectory, err := getChromeExtensionsDirectory()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error getting home directory: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error getting Chrome extensions directory: %v\n", err)
 		os.Exit(1)
 	}
 
-	// Chrome extensions directory on Mac
-	chromeExtensionsDir := filepath.Join(homeDir, "Library", "Application Support", "Google", "Chrome", "Default", "Extensions")
-
-	// Check if Chrome extensions directory exists
-	if _, err := os.Stat(chromeExtensionsDir); os.IsNotExist(err) {
-		fmt.Printf("❌ Chrome extensions directory not found at:\n   %s\n", chromeExtensionsDir)
-		fmt.Println("\nThis could mean:")
-		fmt.Println("  • Chrome is not installed")
-		fmt.Println("  • Chrome hasn't been run yet")
-		fmt.Println("  • Extensions are in a different profile")
+	if err := verifyDirectoryExists(chromeExtensionsDirectory); err != nil {
+		printDirectoryNotFound(chromeExtensionsDirectory)
 		os.Exit(0)
 	}
 
-	fmt.Printf("📂 Checking directory: %s\n\n", chromeExtensionsDir)
+	fmt.Printf("📂 Checking directory: %s\n\n", chromeExtensionsDirectory)
 
-	// Create a map for faster lookup
-	maliciousMap := make(map[string]bool)
-	for _, id := range maliciousExtensions {
-		maliciousMap[id] = true
+	maliciousMap := buildMaliciousExtensionsMap()
+
+	foundMalicious, installedCount, err := scanExtensions(chromeExtensionsDirectory, maliciousMap)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error scanning extensions: %v\n", err)
+		os.Exit(1)
 	}
 
-	// Scan the extensions directory
-	entries, err := os.ReadDir(chromeExtensionsDir)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error reading extensions directory: %v\n", err)
+	printScanSummary(installedCount)
+
+	if len(foundMalicious) > 0 {
+		printMaliciousExtensionsAlert(foundMalicious, chromeExtensionsDirectory)
 		os.Exit(1)
+	}
+
+	printCleanResult()
+}
+
+func printHeader() {
+	fmt.Println("🔍 Scanning Chrome extensions for ShadyPanda malware...")
+	fmt.Println(separator)
+}
+
+func getChromeExtensionsDirectory() (string, error) {
+	homeDirectory, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("failed to get home directory: %w", err)
+	}
+
+	return filepath.Join(homeDirectory, "Library", "Application Support", "Google", "Chrome", "Default", "Extensions"), nil
+}
+
+func verifyDirectoryExists(directory string) error {
+	_, err := os.Stat(directory)
+	if os.IsNotExist(err) {
+		return fmt.Errorf("directory does not exist: %w", err)
+	}
+	return err
+}
+
+func printDirectoryNotFound(directory string) {
+	fmt.Printf("❌ Chrome extensions directory not found at:\n   %s\n", directory)
+	fmt.Println("\nThis could mean:")
+	fmt.Println("  • Chrome is not installed")
+	fmt.Println("  • Chrome hasn't been run yet")
+	fmt.Println("  • Extensions are in a different profile")
+}
+
+func buildMaliciousExtensionsMap() map[string]bool {
+	maliciousMap := make(map[string]bool)
+	for _, extensionID := range maliciousExtensions {
+		maliciousMap[extensionID] = true
+	}
+	return maliciousMap
+}
+
+func scanExtensions(directory string, maliciousMap map[string]bool) ([]string, int, error) {
+	entries, err := os.ReadDir(directory)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to read extensions directory: %w", err)
 	}
 
 	foundMalicious := []string{}
 	installedCount := 0
 
 	for _, entry := range entries {
-		if entry.IsDir() {
-			installedCount++
-			extensionID := entry.Name()
+		if !entry.IsDir() {
+			continue
+		}
 
-			// Check if this extension ID is in our malicious list
-			if maliciousMap[extensionID] {
-				foundMalicious = append(foundMalicious, extensionID)
-			}
+		installedCount++
+		extensionID := entry.Name()
+
+		if maliciousMap[extensionID] {
+			foundMalicious = append(foundMalicious, extensionID)
 		}
 	}
 
-	// Display results
+	return foundMalicious, installedCount, nil
+}
+
+func printScanSummary(installedCount int) {
 	fmt.Printf("📊 Total Chrome extensions found: %d\n", installedCount)
 	fmt.Printf("🛡️  Malicious extensions checked: %d\n\n", len(maliciousExtensions))
+}
 
-	if len(foundMalicious) > 0 {
-		fmt.Println("⚠️  ALERT: MALICIOUS EXTENSIONS DETECTED!")
-		fmt.Println("=" + string(make([]byte, 60)) + "=")
-		fmt.Printf("\n🚨 Found %d malicious extension(s):\n\n", len(foundMalicious))
+func printMaliciousExtensionsAlert(foundMalicious []string, baseDirectory string) {
+	fmt.Println("⚠️  ALERT: MALICIOUS EXTENSIONS DETECTED!")
+	fmt.Println(separator)
+	fmt.Printf("\n🚨 Found %d malicious extension(s):\n\n", len(foundMalicious))
 
-		for i, id := range foundMalicious {
-			fmt.Printf("%d. %s", i+1, id)
-			if id == "eagiakjmjnblliacokhcalebgnhellfi" {
-				fmt.Printf(" (Clean Master)")
-			}
-			fmt.Println()
-
-			// Show the full path
-			extensionPath := filepath.Join(chromeExtensionsDir, id)
-			fmt.Printf("   Path: %s\n\n", extensionPath)
+	for i, extensionID := range foundMalicious {
+		fmt.Printf("%d. %s", i+1, extensionID)
+		if extensionID == "eagiakjmjnblliacokhcalebgnhellfi" {
+			fmt.Printf(" (Clean Master)")
 		}
-
-		fmt.Println("⚡ RECOMMENDED ACTIONS:")
-		fmt.Println("  1. Remove these extensions immediately from Chrome")
-		fmt.Println("  2. Go to chrome://extensions in your browser")
-		fmt.Println("  3. Enable 'Developer mode' to see extension IDs")
-		fmt.Println("  4. Remove any extensions matching the IDs above")
-		fmt.Println("  5. Change your passwords across all accounts")
-		fmt.Println("  6. Run a full antivirus scan")
 		fmt.Println()
 
-		os.Exit(1)
-	} else {
-		fmt.Println("✅ GOOD NEWS: No malicious extensions detected!")
-		fmt.Println("\nYour Chrome installation appears to be clean from the")
-		fmt.Println("ShadyPanda malware campaign extensions.")
+		extensionPath := filepath.Join(baseDirectory, extensionID)
+		fmt.Printf("   Path: %s\n\n", extensionPath)
 	}
 
+	printRemovalInstructions()
+}
+
+func printRemovalInstructions() {
+	fmt.Println("⚡ RECOMMENDED ACTIONS:")
+	fmt.Println("  1. Remove these extensions immediately from Chrome")
+	fmt.Println("  2. Go to chrome://extensions in your browser")
+	fmt.Println("  3. Enable 'Developer mode' to see extension IDs")
+	fmt.Println("  4. Remove any extensions matching the IDs above")
+	fmt.Println("  5. Change your passwords across all accounts")
+	fmt.Println("  6. Run a full antivirus scan")
+	fmt.Println()
+}
+
+func printCleanResult() {
+	fmt.Println("✅ GOOD NEWS: No malicious extensions detected!")
+	fmt.Println("\nYour Chrome installation appears to be clean from the")
+	fmt.Println("ShadyPanda malware campaign extensions.")
 	fmt.Println()
 }
