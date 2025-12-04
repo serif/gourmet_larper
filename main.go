@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -121,6 +122,7 @@ func scanAllProfiles(browserName string, profiles []string, maliciousMap map[str
 
 func printHeader() {
 	fmt.Println("🔍 Scanning browser extensions for ShadyPanda malware...")
+	fmt.Printf("Platform: %s\n", runtime.GOOS)
 	fmt.Println(separator)
 }
 
@@ -132,7 +134,27 @@ func discoverBrowsers() ([]browserInfo, error) {
 
 	browsers := []browserInfo{}
 
-	chromePath := filepath.Join(homeDirectory, "Library", "Application Support", "Google", "Chrome")
+	// Platform-specific paths
+	var chromePath, bravePath string
+	
+	switch runtime.GOOS {
+	case "darwin": // macOS
+		chromePath = filepath.Join(homeDirectory, "Library", "Application Support", "Google", "Chrome")
+		bravePath = filepath.Join(homeDirectory, "Library", "Application Support", "BraveSoftware", "Brave-Browser")
+	case "windows":
+		localAppData := os.Getenv("LOCALAPPDATA")
+		if localAppData == "" {
+			localAppData = filepath.Join(homeDirectory, "AppData", "Local")
+		}
+		chromePath = filepath.Join(localAppData, "Google", "Chrome", "User Data")
+		bravePath = filepath.Join(localAppData, "BraveSoftware", "Brave-Browser", "User Data")
+	case "linux":
+		chromePath = filepath.Join(homeDirectory, ".config", "google-chrome")
+		bravePath = filepath.Join(homeDirectory, ".config", "BraveSoftware", "Brave-Browser")
+	default:
+		return nil, fmt.Errorf("unsupported platform: %s", runtime.GOOS)
+	}
+
 	if err := verifyDirectoryExists(chromePath); err == nil {
 		browsers = append(browsers, browserInfo{
 			name:      "Chrome",
@@ -140,7 +162,6 @@ func discoverBrowsers() ([]browserInfo, error) {
 		})
 	}
 
-	bravePath := filepath.Join(homeDirectory, "Library", "Application Support", "BraveSoftware", "Brave-Browser")
 	if err := verifyDirectoryExists(bravePath); err == nil {
 		browsers = append(browsers, browserInfo{
 			name:      "Brave",
@@ -165,6 +186,26 @@ func printNoBrowsersFound() {
 	fmt.Println("  • Google Chrome")
 	fmt.Println("  • Brave Browser")
 	fmt.Println("\nMake sure at least one of these browsers is installed and has been run.")
+	
+	// Show expected paths for debugging
+	homeDir, _ := os.UserHomeDir()
+	fmt.Println("\nExpected browser locations for your platform:")
+	
+	switch runtime.GOOS {
+	case "darwin":
+		fmt.Printf("  Chrome: %s\n", filepath.Join(homeDir, "Library", "Application Support", "Google", "Chrome"))
+		fmt.Printf("  Brave:  %s\n", filepath.Join(homeDir, "Library", "Application Support", "BraveSoftware", "Brave-Browser"))
+	case "windows":
+		localAppData := os.Getenv("LOCALAPPDATA")
+		if localAppData == "" {
+			localAppData = filepath.Join(homeDir, "AppData", "Local")
+		}
+		fmt.Printf("  Chrome: %s\n", filepath.Join(localAppData, "Google", "Chrome", "User Data"))
+		fmt.Printf("  Brave:  %s\n", filepath.Join(localAppData, "BraveSoftware", "Brave-Browser", "User Data"))
+	case "linux":
+		fmt.Printf("  Chrome: %s\n", filepath.Join(homeDir, ".config", "google-chrome"))
+		fmt.Printf("  Brave:  %s\n", filepath.Join(homeDir, ".config", "BraveSoftware", "Brave-Browser"))
+	}
 }
 
 func discoverBrowserProfiles(browserDirectory string) ([]string, error) {

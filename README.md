@@ -26,6 +26,8 @@ This scanner checks for all 27 Chrome extension IDs identified in the ShadyPanda
 
 ## Quick Start (For Non-Developers)
 
+(This section is for MacOS. For Windows, check the bottom. For Linux, you know what to do.)
+
 ### Step 1: Open Terminal
 
 1. Press `Command + Space` to open Spotlight Search
@@ -234,6 +236,19 @@ go run main.go
 ```bash
 go build -o chrome-scanner main.go
 ./chrome-scanner
+```
+
+## For Windows
+
+Right-click the Start button and select Terminal, then run:
+
+```cmd
+winget install GoLang.Go
+winget install git
+cd %USERPROFILE%\Downloads
+git clone https://github.com/soniah/gourmet_larper.git
+cd gourmet_larper
+go run main.go
 ```
 
 ## Limitations
