@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const separator = "============================================================="
@@ -38,52 +39,116 @@ var maliciousExtensions = []string{
 	"ondhgmkgppbdnogfiglikgpdkmkaiggk",
 }
 
+type browserInfo struct {
+	name      string
+	directory string
+}
+
+type profileScanResult struct {
+	browserName      string
+	profileName      string
+	foundMalicious   []string
+	installedCount   int
+	extensionsPath   string
+}
+
 func main() {
 	printHeader()
 
-	chromeExtensionsDirectory, err := getChromeExtensionsDirectory()
+	browsers, err := discoverBrowsers()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error getting Chrome extensions directory: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error discovering browsers: %v\n", err)
 		os.Exit(1)
 	}
 
-	if err := verifyDirectoryExists(chromeExtensionsDirectory); err != nil {
-		printDirectoryNotFound(chromeExtensionsDirectory)
+	if len(browsers) == 0 {
+		printNoBrowsersFound()
 		os.Exit(0)
 	}
 
-	fmt.Printf("📂 Checking directory: %s\n\n", chromeExtensionsDirectory)
+	allProfiles := []profileScanResult{}
 
-	maliciousMap := buildMaliciousExtensionsMap()
+	for _, browser := range browsers {
+		profiles, err := discoverBrowserProfiles(browser.directory)
+		if err != nil {
+			continue
+		}
 
-	foundMalicious, installedCount, err := scanExtensions(chromeExtensionsDirectory, maliciousMap)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error scanning extensions: %v\n", err)
-		os.Exit(1)
+		maliciousMap := buildMaliciousExtensionsMap()
+		results := scanAllProfiles(browser.name, profiles, maliciousMap)
+		allProfiles = append(allProfiles, results...)
 	}
 
-	printScanSummary(installedCount)
-
-	if len(foundMalicious) > 0 {
-		printMaliciousExtensionsAlert(foundMalicious, chromeExtensionsDirectory)
-		os.Exit(1)
+	if len(allProfiles) == 0 {
+		fmt.Println("⚠️  No browser profiles found to scan.")
+		os.Exit(0)
 	}
 
-	printCleanResult()
+	printAllResults(allProfiles)
+
+	if hasMaliciousExtensions(allProfiles) {
+		os.Exit(1)
+	}
+}
+
+func scanAllProfiles(browserName string, profiles []string, maliciousMap map[string]bool) []profileScanResult {
+	results := []profileScanResult{}
+
+	for _, profilePath := range profiles {
+		profileName := filepath.Base(profilePath)
+		extensionsDirectory := filepath.Join(profilePath, "Extensions")
+
+		if err := verifyDirectoryExists(extensionsDirectory); err != nil {
+			continue
+		}
+
+		foundMalicious, installedCount, err := scanExtensions(extensionsDirectory, maliciousMap)
+		if err != nil {
+			continue
+		}
+
+		results = append(results, profileScanResult{
+			browserName:    browserName,
+			profileName:    profileName,
+			foundMalicious: foundMalicious,
+			installedCount: installedCount,
+			extensionsPath: extensionsDirectory,
+		})
+	}
+
+	return results
 }
 
 func printHeader() {
-	fmt.Println("🔍 Scanning Chrome extensions for ShadyPanda malware...")
+	fmt.Println("🔍 Scanning browser extensions for ShadyPanda malware...")
 	fmt.Println(separator)
 }
 
-func getChromeExtensionsDirectory() (string, error) {
+func discoverBrowsers() ([]browserInfo, error) {
 	homeDirectory, err := os.UserHomeDir()
 	if err != nil {
-		return "", fmt.Errorf("failed to get home directory: %w", err)
+		return nil, fmt.Errorf("failed to get home directory: %w", err)
 	}
 
-	return filepath.Join(homeDirectory, "Library", "Application Support", "Google", "Chrome", "Default", "Extensions"), nil
+	browsers := []browserInfo{}
+
+	chromePath := filepath.Join(homeDirectory, "Library", "Application Support", "Google", "Chrome")
+	if err := verifyDirectoryExists(chromePath); err == nil {
+		browsers = append(browsers, browserInfo{
+			name:      "Chrome",
+			directory: chromePath,
+		})
+	}
+
+	bravePath := filepath.Join(homeDirectory, "Library", "Application Support", "BraveSoftware", "Brave-Browser")
+	if err := verifyDirectoryExists(bravePath); err == nil {
+		browsers = append(browsers, browserInfo{
+			name:      "Brave",
+			directory: bravePath,
+		})
+	}
+
+	return browsers, nil
 }
 
 func verifyDirectoryExists(directory string) error {
@@ -94,12 +159,35 @@ func verifyDirectoryExists(directory string) error {
 	return err
 }
 
-func printDirectoryNotFound(directory string) {
-	fmt.Printf("❌ Chrome extensions directory not found at:\n   %s\n", directory)
-	fmt.Println("\nThis could mean:")
-	fmt.Println("  • Chrome is not installed")
-	fmt.Println("  • Chrome hasn't been run yet")
-	fmt.Println("  • Extensions are in a different profile")
+func printNoBrowsersFound() {
+	fmt.Println("❌ No supported browsers found.")
+	fmt.Println("\nSupported browsers:")
+	fmt.Println("  • Google Chrome")
+	fmt.Println("  • Brave Browser")
+	fmt.Println("\nMake sure at least one of these browsers is installed and has been run.")
+}
+
+func discoverBrowserProfiles(browserDirectory string) ([]string, error) {
+	entries, err := os.ReadDir(browserDirectory)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read browser directory: %w", err)
+	}
+
+	profiles := []string{}
+
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+
+		name := entry.Name()
+		if name == "Default" || strings.HasPrefix(name, "Profile ") {
+			profilePath := filepath.Join(browserDirectory, name)
+			profiles = append(profiles, profilePath)
+		}
+	}
+
+	return profiles, nil
 }
 
 func buildMaliciousExtensionsMap() map[string]bool {
@@ -135,25 +223,55 @@ func scanExtensions(directory string, maliciousMap map[string]bool) ([]string, i
 	return foundMalicious, installedCount, nil
 }
 
-func printScanSummary(installedCount int) {
-	fmt.Printf("📊 Total Chrome extensions found: %d\n", installedCount)
+func printAllResults(results []profileScanResult) {
+	totalExtensions := 0
+	totalMalicious := 0
+	browserCounts := make(map[string]int)
+
+	for _, result := range results {
+		totalExtensions += result.installedCount
+		totalMalicious += len(result.foundMalicious)
+		browserCounts[result.browserName]++
+	}
+
+	fmt.Println("Scan Summary:")
+	for browser, count := range browserCounts {
+		fmt.Printf("  • %s: %d profile(s)\n", browser, count)
+	}
+	fmt.Printf("\n📊 Total profiles scanned: %d\n", len(results))
+	fmt.Printf("📦 Total extensions found: %d\n", totalExtensions)
 	fmt.Printf("🛡️  Malicious extensions checked: %d\n\n", len(maliciousExtensions))
+
+	if totalMalicious > 0 {
+		printMaliciousResults(results)
+		return
+	}
+
+	printCleanResult()
 }
 
-func printMaliciousExtensionsAlert(foundMalicious []string, baseDirectory string) {
+func printMaliciousResults(results []profileScanResult) {
 	fmt.Println("⚠️  ALERT: MALICIOUS EXTENSIONS DETECTED!")
 	fmt.Println(separator)
-	fmt.Printf("\n🚨 Found %d malicious extension(s):\n\n", len(foundMalicious))
 
-	for i, extensionID := range foundMalicious {
-		fmt.Printf("%d. %s", i+1, extensionID)
-		if extensionID == "eagiakjmjnblliacokhcalebgnhellfi" {
-			fmt.Printf(" (Clean Master)")
+	for _, result := range results {
+		if len(result.foundMalicious) == 0 {
+			continue
 		}
-		fmt.Println()
 
-		extensionPath := filepath.Join(baseDirectory, extensionID)
-		fmt.Printf("   Path: %s\n\n", extensionPath)
+		fmt.Printf("\n🚨 Browser: %s | Profile: %s\n", result.browserName, result.profileName)
+		fmt.Printf("Found %d malicious extension(s):\n\n", len(result.foundMalicious))
+
+		for i, extensionID := range result.foundMalicious {
+			fmt.Printf("  %d. %s", i+1, extensionID)
+			if extensionID == "eagiakjmjnblliacokhcalebgnhellfi" {
+				fmt.Printf(" (Clean Master)")
+			}
+			fmt.Println()
+
+			extensionPath := filepath.Join(result.extensionsPath, extensionID)
+			fmt.Printf("     Path: %s\n\n", extensionPath)
+		}
 	}
 
 	printRemovalInstructions()
@@ -161,8 +279,8 @@ func printMaliciousExtensionsAlert(foundMalicious []string, baseDirectory string
 
 func printRemovalInstructions() {
 	fmt.Println("⚡ RECOMMENDED ACTIONS:")
-	fmt.Println("  1. Remove these extensions immediately from Chrome")
-	fmt.Println("  2. Go to chrome://extensions in your browser")
+	fmt.Println("  1. Remove these extensions immediately from your browser")
+	fmt.Println("  2. Go to chrome://extensions (Chrome) or brave://extensions (Brave)")
 	fmt.Println("  3. Enable 'Developer mode' to see extension IDs")
 	fmt.Println("  4. Remove any extensions matching the IDs above")
 	fmt.Println("  5. Change your passwords across all accounts")
@@ -172,7 +290,16 @@ func printRemovalInstructions() {
 
 func printCleanResult() {
 	fmt.Println("✅ GOOD NEWS: No malicious extensions detected!")
-	fmt.Println("\nYour Chrome installation appears to be clean from the")
+	fmt.Println("\nAll scanned browser profiles appear to be clean from the")
 	fmt.Println("ShadyPanda malware campaign extensions.")
 	fmt.Println()
+}
+
+func hasMaliciousExtensions(results []profileScanResult) bool {
+	for _, result := range results {
+		if len(result.foundMalicious) > 0 {
+			return true
+		}
+	}
+	return false
 }

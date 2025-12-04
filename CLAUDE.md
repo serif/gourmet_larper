@@ -2,6 +2,26 @@
 
 You are a skilled Go developer with experience in building robust, maintainable applications. You understand Go idioms, standard library conventions, and best practices for writing clean, efficient code.
 
+## Application Overview
+
+This application scans Chromium-based browser installations for malicious extensions associated with the ShadyPanda malware campaign. It automatically discovers and scans all browser profiles on the system, including the Default profile and any additional profiles (Profile 1, Profile 2, etc.).
+
+### Supported Browsers
+
+- **Google Chrome**: Full support for all profiles
+- **Brave Browser**: Full support for all profiles
+
+The scanner automatically detects which browsers are installed and scans all available profiles across all detected browsers.
+
+### Features
+
+- **Multi-browser support**: Automatically detects Chrome and Brave installations
+- **Multi-profile scanning**: Scans all profiles within each detected browser
+- **Known malware detection**: Checks against a curated list of malicious extension IDs
+- **Comprehensive reporting**: Displays scan results grouped by browser and profile
+- **Safe operation**: Read-only scanning with no modifications to browser data
+- **Graceful failure handling**: Continues scanning even if individual profiles fail
+
 ## Code Style Guidelines
 
 ### Import Organization
@@ -103,3 +123,48 @@ Organize file contents in this order:
 * Unexported (private) functions
 
 This consistent structure makes files easier to navigate and understand.
+
+## Architecture Notes
+
+### Browser Discovery
+
+The application uses the `discoverBrowsers` function to detect installed Chromium-based browsers by checking standard installation paths on macOS:
+
+- **Chrome**: `~/Library/Application Support/Google/Chrome`
+- **Brave**: `~/Library/Application Support/BraveSoftware/Brave-Browser`
+
+Each detected browser is represented by a `browserInfo` struct containing:
+- `name`: Human-readable browser name (e.g., "Chrome", "Brave")
+- `directory`: Full filesystem path to the browser's data directory
+
+### Profile Discovery
+
+The `discoverBrowserProfiles` function scans each browser directory to find all user profiles:
+- The "Default" profile directory
+- Any directories matching the "Profile *" naming pattern (e.g., "Profile 1", "Profile 2")
+
+This approach ensures comprehensive scanning across all browsers and profiles without requiring manual configuration or user input.
+
+### Scan Result Structure
+
+The `profileScanResult` struct encapsulates scan results for each profile:
+- `browserName`: Name of the browser (e.g., "Chrome", "Brave")
+- `profileName`: The profile directory name (e.g., "Default", "Profile 1")
+- `foundMalicious`: Slice of malicious extension IDs detected in this profile
+- `installedCount`: Total number of extensions installed in this profile
+- `extensionsPath`: Full filesystem path to the profile's extensions directory
+
+### Error Handling Strategy
+
+The scanner follows a fail-graceful approach at multiple levels:
+
+**Browser Level:**
+- If a browser is not installed, it's silently skipped
+- Other browsers continue to be scanned normally
+
+**Profile Level:**
+- If a profile's extensions directory doesn't exist, it's skipped silently
+- If scanning a profile fails, other profiles continue
+- Only critical errors (no browsers found, home directory inaccessible) terminate the scan
+
+This multi-level graceful failure ensures that issues with one browser or profile don't prevent scanning others.
