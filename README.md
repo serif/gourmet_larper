@@ -1,14 +1,15 @@
-# 🛡️ Chrome-Based Browser Extension Malware Scanner
+# 🛡️ Chrome-Based Browser Extension ShadyPanda Malware Scanner
 
-> **⚠️ SECURITY ALERT**: Scan your Mac for ShadyPanda malware extensions
+> **⚠️ SECURITY ALERT**: Scan your Machine for ShadyPanda malware extensions
 
-A simple tool to scan your Mac's Chrome-based browser extensions for malicious extensions from the ShadyPanda campaign that infected 4.3 million browsers.
+A simple tool to scan your Chrome-based browser extensions for malicious
+extensions from the ShadyPanda campaign that infected 4.3 million browsers.
 
-**Supported Browsers:** Chrome, Brave | **Platform:** macOS | **Language:** Go | **Scans for:** 27 malicious extensions
+**Supported Browsers:** Chrome, Brave | **Platform:** macOS,Windows,Linux | **Language:** Go | **Scans for:** 27 malicious extensions
 
 ## ⚡ Quick Check
 
-**Have Chrome or Brave on your Mac?** Run this scanner to check if you're infected.
+**Have Chrome or Brave on your Machine?** Run this scanner to check if you're infected.
 
 **Takes less than 5 seconds** and requires no technical knowledge.
 
@@ -24,7 +25,7 @@ The ShadyPanda campaign is a 7-year malware operation that infected 4.3 million 
 
 This scanner checks for all 27 Chrome extension IDs identified in the ShadyPanda campaign.
 
-## Quick Start (For Non-Developers)
+## Quick Start for Mac (For Non-Developers)
 
 (This section is for MacOS. For Windows, check the bottom. For Linux, you know what to do.)
 
@@ -78,6 +79,38 @@ go run main.go
 ```
 
 The scanner will automatically detect and check all Chrome and Brave browser profiles, then display the results.
+
+## For Windows
+
+Right-click the Start button and select Terminal, then run:
+
+```cmd
+winget install GoLang.Go
+winget install git
+cd %USERPROFILE%\Downloads
+git clone https://github.com/soniah/gourmet_larper.git
+cd gourmet_larper
+go run main.go
+```
+
+## For Linux
+
+Open a terminal and run:
+
+```bash
+# Install Git and Go (Ubuntu/Debian)
+sudo apt update
+sudo apt install git golang-go
+
+# Or for Fedora/RHEL
+sudo dnf install git golang
+
+# Clone and run
+cd ~/Downloads
+git clone https://github.com/soniah/gourmet_larper.git
+cd gourmet_larper
+go run main.go
+```
 
 ### What You'll See
 
@@ -236,38 +269,6 @@ go run main.go
 ```bash
 go build -o chrome-scanner main.go
 ./chrome-scanner
-```
-
-## For Windows
-
-Right-click the Start button and select Terminal, then run:
-
-```cmd
-winget install GoLang.Go
-winget install git
-cd %USERPROFILE%\Downloads
-git clone https://github.com/soniah/gourmet_larper.git
-cd gourmet_larper
-go run main.go
-```
-
-## For Linux
-
-Open a terminal and run:
-
-```bash
-# Install Git and Go (Ubuntu/Debian)
-sudo apt update
-sudo apt install git golang-go
-
-# Or for Fedora/RHEL
-sudo dnf install git golang
-
-# Clone and run
-cd ~/Downloads
-git clone https://github.com/soniah/gourmet_larper.git
-cd gourmet_larper
-go run main.go
 ```
 
 ## Limitations
