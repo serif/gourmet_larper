@@ -161,12 +161,25 @@ If the scanner detects malicious extensions:
 
 ## Known Malicious Extensions
 
-This scanner checks for these ShadyPanda extensions:
+This scanner checks for 27 known ShadyPanda malicious extension IDs. The campaign includes these popular extensions:
 
-- **eagiakjmjnblliacokhcalebgnhellfi** - Clean Master
-- **WeTab New Tab Page** (various IDs)
-- **Infinity New Tab (Pro)** (various IDs)
-- Plus 24 other identified malicious extensions
+- **Clean Master: the best Chrome Cache Cleaner**
+- **Speedtest Pro-Free Online Internet Speed Test**
+- **BlockSite**
+- **Address bar search engine switcher**
+- **SafeSwift New Tab**
+- **Infinity V+ New Tab**
+- **OneTab Plus:Tab Manage & Productivity**
+- **WeTab 新标签页** (WeTab New Tab Page)
+- **Infinity New Tab for Mobile**
+- **Infinity New Tab (Pro)**
+- **Infinity New Tab**
+- **Dream Afar New Tab**
+- **Download Manager Pro**
+- **Galaxy Theme Wallpaper HD 4k HomePage**
+- **Halo 4K Wallpaper HD HomePage**
+
+**Note:** This list represents some of the identified malicious extensions, but the campaign includes additional extensions not listed here. The scanner checks for all 27 known malicious extension IDs.
 
 ## Troubleshooting
 
@@ -243,6 +256,7 @@ No data leaves your computer. This tool only reads local files.
 
 ## References
 
+- [The Hacker News - ShadyPanda Turns Popular Browser Extensions Into Spyware](https://thehackernews.com/2025/12/shadypanda-turns-popular-browser.html)
 - [Koi Security Report](https://koi.ai/blog/4-million-browsers-infected-inside-shadypanda-7-year-malware-campaign)
 - [BleepingComputer Coverage](https://www.bleepingcomputer.com/news/security/shadypanda-browser-extensions-amass-43m-installs-in-malicious-campaign/)
 - [Malwarebytes Analysis](https://www.malwarebytes.com/blog/news/2025/12/sleeper-browser-extensions-woke-up-as-spyware-on-4-million-devices)

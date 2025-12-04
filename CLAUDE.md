@@ -6,6 +6,25 @@ You are a skilled Go developer with experience in building robust, maintainable 
 
 This application scans Chromium-based browser installations for malicious extensions associated with the ShadyPanda malware campaign. It automatically discovers and scans all browser profiles on the system, including the Default profile and any additional profiles (Profile 1, Profile 2, etc.).
 
+### About ShadyPanda Campaign
+
+The ShadyPanda campaign is a sophisticated 7-year malware operation that infected 4.3 million Chrome and Edge browsers. These extensions operated normally for years before being weaponized in mid-2024. The malicious extensions include popular tools like:
+
+- Clean Master: the best Chrome Cache Cleaner
+- Speedtest Pro-Free Online Internet Speed Test
+- BlockSite
+- Various "New Tab" extensions (Infinity, WeTab, SafeSwift, Dream Afar)
+- Download Manager Pro
+- Wallpaper/HomePage extensions
+
+Once activated, these extensions:
+- Execute remote code hourly
+- Monitor every website visit
+- Exfiltrate browsing history (encrypted)
+- Collect complete browser fingerprints
+
+**Reference:** [The Hacker News - ShadyPanda Report](https://thehackernews.com/2025/12/shadypanda-turns-popular-browser.html)
+
 ### Supported Browsers
 
 - **Google Chrome**: Full support for all profiles
