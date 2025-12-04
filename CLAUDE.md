@@ -29,14 +29,16 @@ Once activated, these extensions:
 
 - **Google Chrome**: Full support for all profiles
 - **Brave Browser**: Full support for all profiles
+- **Microsoft Edge**: Full support for all profiles (uses Edge-specific malicious signature list)
 
-The scanner automatically detects which browsers are installed and scans all available profiles across all detected browsers.
+The scanner automatically detects which browsers are installed and scans all available profiles across all detected browsers. Edge uses a different set of malicious extension signatures compared to Chrome and Brave.
 
 ### Features
 
-- **Multi-browser support**: Automatically detects Chrome and Brave installations
+- **Multi-browser support**: Automatically detects Chrome, Brave, and Edge installations
+- **Browser-specific signatures**: Edge scans use a separate list of 133 malicious extension IDs
 - **Multi-profile scanning**: Scans all profiles within each detected browser
-- **Known malware detection**: Checks against a curated list of malicious extension IDs
+- **Known malware detection**: Checks against curated lists of malicious extension IDs
 - **Comprehensive reporting**: Displays scan results grouped by browser and profile
 - **Safe operation**: Read-only scanning with no modifications to browser data
 - **Graceful failure handling**: Continues scanning even if individual profiles fail
@@ -147,14 +149,35 @@ This consistent structure makes files easier to navigate and understand.
 
 ### Browser Discovery
 
-The application uses the `discoverBrowsers` function to detect installed Chromium-based browsers by checking standard installation paths on macOS:
+The application uses the `discoverBrowsers` function to detect installed Chromium-based browsers by checking standard installation paths:
 
+**macOS:**
 - **Chrome**: `~/Library/Application Support/Google/Chrome`
 - **Brave**: `~/Library/Application Support/BraveSoftware/Brave-Browser`
+- **Edge**: `~/Library/Application Support/Microsoft Edge`
+
+**Windows:**
+- **Chrome**: `%LOCALAPPDATA%\Google\Chrome\User Data`
+- **Brave**: `%LOCALAPPDATA%\BraveSoftware\Brave-Browser\User Data`
+- **Edge**: `%LOCALAPPDATA%\Microsoft\Edge\User Data`
+
+**Linux:**
+- **Chrome**: `~/.config/google-chrome`
+- **Brave**: `~/.config/BraveSoftware/Brave-Browser`
+- **Edge**: `~/.config/microsoft-edge`
 
 Each detected browser is represented by a `browserInfo` struct containing:
-- `name`: Human-readable browser name (e.g., "Chrome", "Brave")
+- `name`: Human-readable browser name (e.g., "Chrome", "Brave", "Edge")
 - `directory`: Full filesystem path to the browser's data directory
+
+### Malicious Extension Detection
+
+The scanner maintains two separate lists of malicious extension IDs:
+
+- **`maliciousExtensionsChromeBrave`**: 27 extension IDs used for Chrome and Brave scans
+- **`maliciousExtensionsEdge`**: 133 extension IDs specific to Edge browser
+
+The `buildMaliciousExtensionsMap(browserName)` function selects the appropriate list based on the browser being scanned.
 
 ### Profile Discovery
 

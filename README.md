@@ -5,11 +5,11 @@
 A simple tool to scan your Chrome-based browser extensions for malicious
 extensions from the ShadyPanda campaign that infected 4.3 million browsers.
 
-**Supported Browsers:** Chrome, Brave | **Platform:** macOS,Windows,Linux | **Language:** Go | **Scans for:** 27 malicious extensions
+**Supported Browsers:** Chrome, Brave, Edge | **Platforms:** macOS, Windows, Linux | **Language:** Go
 
 ## ⚡ Quick Check
 
-**Have Chrome or Brave on your Machine?** Run this scanner to check if you're infected.
+**Have Chrome, Brave, or Edge on your machine?** Run this scanner to check if you're infected.
 
 **Takes less than 5 seconds** and requires no technical knowledge.
 
@@ -273,7 +273,8 @@ go build -o chrome-scanner main.go
 
 ## Limitations
 
-- Only supports Chrome and Brave (not Edge or other Chromium browsers)
+- Supports Chrome, Brave, and Edge (other Chromium browsers not yet supported)
+- Edge uses a different set of malicious extension signatures
 - Requires browsers to have been run at least once to create profile directories
 - Windows and Linux support is experimental; primarily tested on macOS
 - Linux: Browser paths may vary by distribution; Snap installations use different paths
@@ -306,10 +307,10 @@ A: Yes. The code is open source and only reads your local Chrome extensions fold
 A: No. The scan takes less than 5 seconds and doesn't run in the background.
 
 **Q: What if I use multiple browser profiles?**
-A: The scanner automatically detects and scans all profiles in both Chrome and Brave, including Default, Profile 1, Profile 2, etc.
+A: The scanner automatically detects and scans all profiles in Chrome, Brave, and Edge, including Default, Profile 1, Profile 2, etc.
 
-**Q: What about other Chromium browsers like Edge or Opera?**
-A: Currently only Chrome and Brave are supported. Support for additional browsers could be added in the future.
+**Q: What about other Chromium browsers like Opera or Vivaldi?**
+A: Currently Chrome, Brave, and Edge are supported. Support for additional browsers could be added in the future. Note that Edge uses a different set of malicious extension signatures than Chrome/Brave.
 
 **Q: Does this work on Windows or Linux?**
 A: Yes! The scanner now supports macOS, Windows, and Linux. See the platform-specific installation instructions above. Note that Windows and Linux support is experimental and primarily tested on macOS.

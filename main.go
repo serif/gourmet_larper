@@ -10,7 +10,7 @@ import (
 
 const separator = "============================================================="
 
-var maliciousExtensions = []string{
+var maliciousExtensionsChromeBrave = []string{
 	"bpgaffohfacaamplbbojgbiicfgedmoi",
 	"cdgonefipacceedbkflolomdegncceid",
 	"cihbmmokhmieaidfgamioabhhkggnehm",
@@ -38,6 +38,141 @@ var maliciousExtensions = []string{
 	"ogjneoecnllmjcegcfpaamfpbiaaiekh",
 	"olaahjgjlhoehkpemnfognpgmkbedodk",
 	"ondhgmkgppbdnogfiglikgpdkmkaiggk",
+}
+
+var maliciousExtensionsEdge = []string{
+	"aadnmeanpbokjjahcnikajejglihibpd",
+	"acogeoajdpgplfhidldckbjkkpgeebod",
+	"afooldonhjnhddgnfahlepchipjennab",
+	"agdlpnhabjfcbeiempefhpgikapcapjb",
+	"ahebpkbnckhgjmndfjejibjjahjdlhdb",
+	"akialmafcdmkelghnomeneinkcllnoih",
+	"alknmfpopohfpdpafdmobclioihdkhjh",
+	"bafbmfpfepdlgnfkgfbobplkkaoakjcl",
+	"bbdioggpbhhodagchciaeaggdponnhpa",
+	"bboeoilakaofjkdmekpgeigieokkpgfn",
+	"bdhjinjoglaijpffoamhhnhooeimgoap",
+	"bjdclfjlhgcdcpjhmhfggkkfacipilai",
+	"bmlifknbfonkgphkpmkeoahgbhbdhebh",
+	"boiciofdokedkpmopjnghpkgdakmcpmb",
+	"bpelnogcookhocnaokfpoeinibimbeff",
+	"bpngofombcjloljkoafhmpcjclkekfbh",
+	"bppelgkcnhfkicolffhlkbdghdnjdkhi",
+	"cacbflgkiidgcekflfgdnjdnaalfmkob",
+	"cbijiaccpnkbdpgbmiiipedpepbhioel",
+	"cbkogccidanmoaicgphipbdofakomlak",
+	"ccdimkoieijdbgdlkfjjfncmihmlpanj",
+	"cgehahdmoijenmnhinajnojmmlnipckl",
+	"cgjgmbppcoolfkbkjhoogdpkboohhgel",
+	"chmcepembfffejphepoongapnlchjgil",
+	"dbagndmcddecodlmnlcmhheicgkaglpk",
+	"dfakjobhimnibdmkbgpkijoihplhcnil",
+	"dhjmmcjnajkpnbnbpagglbbfpbacoffm",
+	"dkkpollfhjoiapcenojlmgempmjekcla",
+	"dmpceopfiajfdnoiebfankfoabfehdpn",
+	"domfmjgbmkckapepjahpedlpdedmckbj",
+	"ebileebbekdcpfjlekjapgmbgpfigled",
+	"ehmnkbambjnodfbjcebjffilahbfjdml",
+	"eholblediahnodlgigdkdhkkpmbiafoj",
+	"ejdihbblcbdfobabjfebfjfopenohbjb",
+	"ejfocpkjndmkbloiobcdhkkoeekcpkik",
+	"ekndlocgcngbpebppapnpalpjfnkoffh",
+	"elckfehnjdbghpoheamjffpdbbogjhie",
+	"emiocjgakibimbopobplmfldkldhhiad",
+	"enaigkcpmpohpbokbfllbkijmllmpafn",
+	"enkihkfondbngohnmlefmobdgkpmejha",
+	"fbbmnieefocnacnecccgmedmcbhlkcpm",
+	"fcidgbgogbfdcgijkcfdjcagmhcelpbc",
+	"fckphkcbpgmappcgnfieaacjbknhkhin",
+	"ffgihbmcfcihmpbegcfdkmafaplheknk",
+	"fhababnomjcnhmobbemagohkldaeicad",
+	"fjigdpmfeomndepihcinokhcphdojepm",
+	"fjioinpkgmlcioajfnncgldldcnabffe",
+	"fkbcbgffcclobgbombinljckbelhnpif",
+	"fmgfcpjmmapcjlknncjgmbolgaecngfo",
+	"fnnigcfbmghcefaboigkhfimeolhhbcp",
+	"fodcokjckpkfpegbekkiallamhedahjd",
+	"fomlombffdkflbliepgpgcnagolnegjn",
+	"fpokgjmlcemklhmilomcljolhnbaaajk",
+	"fppchnhginnfabgenhihpncnphhafmac",
+	"gbcjipmcpedgndgdnfofbhgnkmghoamm",
+	"gdnhikbabcflemolpeaaknnieodgpiie",
+	"ghaggkcfafofhcfppignflhlocmcfimd",
+	"ghhddclfklljabeodmcejjjlhoaaiban",
+	"gkanlgbbnncfafkhlchnadcopcgjkfli",
+	"gkhggnaplpjkghjjcmpmnmidjndojpcn",
+	"glfddenhiaacfmhoiebfeljnfkkkmbjb",
+	"googojfbnbhbbnpfpdnffnklipgifngn",
+	"gpolcigkhldaighngmmmcjldkkiaonbg",
+	"hadkldcldaanpomhhllacdmglkoepaed",
+	"hajlmbnnniemimmaehcefkamdadpjlfa",
+	"hbghbdhfibifdgnbpaogepnkekonkdgc",
+	"hdfknlljfbdfjdjhfgoonpphpigjjjak",
+	"hdpmmcmblgbkllldbccfdejchjlpochf",
+	"hegpgapbnfiibpbkanjemgmdpmmlecbc",
+	"hfeialplaojonefabmojhobdmghnjkmf",
+	"hgolomhkdcpmbgckhebdhdknaemlbbaa",
+	"hiodlpcelfelhpinhgngoopbmclcaghd",
+	"hjfmkkelabjoojjmjljidocklbibphgl",
+	"hlglicejgohbanllnmnjllajhmnhjjel",
+	"hmbacpfgehmmoloinfmkgkpjoagiogai",
+	"hofaaigdagglolgiefkbencchnekjejl",
+	"hohobnhiiohgcipklpncfmjkjpmejjni",
+	"iaccapfapbjahnhcmkgjjonlccbhdpjl",
+	"ibfpbjfnpcgmiggfildbcngccoomddmj",
+	"ibmgdfenfldppaodbahpgcoebmmkdbac",
+	"idjhfmgaddmdojcfmhcjnnbhnhbmhipd",
+	"iedkeilnpbkeecjpmkelnglnjpnacnlh",
+	"igiakpjhacibmaichhgbagdkjmjbnanl",
+	"ikajognfijokhbgjdhgpemljgcjclpmn",
+	"ikgaleggljchgbihlaanjbkekmmgccam",
+	"ikkoanocgpdmmiamnkogipbpdpckcahn",
+	"ileojfedpkdbkcchpnghhaebfoimamop",
+	"iphacjobmeoknlhenjfiilbkddgaljad",
+	"ipnidmjhnoipibbinllilgeohohehabl",
+	"ipokalojgdmhfpagmhnjokidnpjfnfik",
+	"jbajdpebknffiaenkdhopebkolgdlfaf",
+	"jelgelidmodjpmohbapbghdgcpncahki",
+	"jhgfinhjcamijjoikplacnfknpchndgb",
+	"jiiggekklbbojgfmdenimcdkmidnfofl",
+	"jocnjcakendmllafpmjailfnlndaaklf",
+	"jpoofbjomdefajdjcimmaoildecebkjc",
+	"kcpkoopmfjhdpgjohcbgkbjpmbjmhgoi",
+	"kgmlodoegkmpfkbepkfhgeldidodgohd",
+	"klggeioacnkkpdcnapgcoicnblliidmf",
+	"klgjbnheihgnmimajhohfcldhfpjnahe",
+	"kpfbijpdidioaomoecdbfaodhajbcjfl",
+	"laholcgeblfbgdhkbiidbpiofdcbpeeo",
+	"lfgakdlafdenmaikccbojgcofkkhmolj",
+	"lgnjdldkappogbkljaiedgogobcgemch",
+	"lhfdakoonenpbggbeephofdlflloghhi",
+	"ljjngehkphcdnnapgciajcdbcpgmpknc",
+	"ljkgnegaajfacghepjiajibgdpfmcfip",
+	"ljmcneongnlaecabgneiippeacdoimaa",
+	"llilhpmmhicmiaoancaafdgganakopfg",
+	"lljplndkobdgkjilfmfiefpldkhkhbbd",
+	"lmnjiioclbjphkggicmldippjojgmldk",
+	"mddfnhdadbofiifdebeiegecchpkbgdb",
+	"mnophppbmlnlfobakddidbcgcjakipin",
+	"ncapkionddmdmfocnjfcfpnimepibggc",
+	"nchdmembkfgkejljapneliogidkchiop",
+	"nemkiffjklgaooligallbpmhdmmhepll",
+	"ngbfciefgjgijkkmpalnmhikoojilkob",
+	"nhdiopbebcklbkpfnhipecgfhdhdbfhb",
+	"njoedigapanaggiabjafnaklppphempm",
+	"nkjomoafjgemogbdkhledkoeaflnmgfi",
+	"nlcebdoehkdiojeahkofcfnolkleembf",
+	"nnceocbiolncfljcmajijmeakcdlffnh",
+	"nokknhlkpdfppefncfkdebhgfpfilieo",
+	"oaacndacaoelmkhfilennooagoelpjop",
+	"oghgaghnofhhoolfneepjneedejcpiic",
+	"omkjakddaeljdfgekdjebbbiboljnalk",
+	"onifebiiejdjncjpjnojlebibonmnhog",
+	"opakkgodhhongnhbdkgjgdlcbknacpaa",
+	"opncjjhgbllenobgbfjbblhghmdpmpbj",
+	"paghkadkhiladedijgodgghaajppmpcg",
+	"papedehkgfhnagdiempdbhlgcnioofnd",
+	"pkjfghocapckmendmgdmppjccbplccbg",
 }
 
 type browserInfo struct {
@@ -75,7 +210,7 @@ func main() {
 			continue
 		}
 
-		maliciousMap := buildMaliciousExtensionsMap()
+		maliciousMap := buildMaliciousExtensionsMap(browser.name)
 		results := scanAllProfiles(browser.name, profiles, maliciousMap)
 		allProfiles = append(allProfiles, results...)
 	}
@@ -135,12 +270,13 @@ func discoverBrowsers() ([]browserInfo, error) {
 	browsers := []browserInfo{}
 
 	// Platform-specific paths
-	var chromePath, bravePath string
-	
+	var chromePath, bravePath, edgePath string
+
 	switch runtime.GOOS {
 	case "darwin": // macOS
 		chromePath = filepath.Join(homeDirectory, "Library", "Application Support", "Google", "Chrome")
 		bravePath = filepath.Join(homeDirectory, "Library", "Application Support", "BraveSoftware", "Brave-Browser")
+		edgePath = filepath.Join(homeDirectory, "Library", "Application Support", "Microsoft Edge")
 	case "windows":
 		localAppData := os.Getenv("LOCALAPPDATA")
 		if localAppData == "" {
@@ -148,12 +284,14 @@ func discoverBrowsers() ([]browserInfo, error) {
 		}
 		chromePath = filepath.Join(localAppData, "Google", "Chrome", "User Data")
 		bravePath = filepath.Join(localAppData, "BraveSoftware", "Brave-Browser", "User Data")
+		edgePath = filepath.Join(localAppData, "Microsoft", "Edge", "User Data")
 	case "linux":
 		// Note: Paths vary by distribution and installation method.
 		// Snap installations use different paths (e.g., ~/snap/chromium/).
 		// This covers standard package manager installations.
 		chromePath = filepath.Join(homeDirectory, ".config", "google-chrome")
 		bravePath = filepath.Join(homeDirectory, ".config", "BraveSoftware", "Brave-Browser")
+		edgePath = filepath.Join(homeDirectory, ".config", "microsoft-edge")
 	default:
 		return nil, fmt.Errorf("unsupported platform: %s", runtime.GOOS)
 	}
@@ -169,6 +307,13 @@ func discoverBrowsers() ([]browserInfo, error) {
 		browsers = append(browsers, browserInfo{
 			name:      "Brave",
 			directory: bravePath,
+		})
+	}
+
+	if err := verifyDirectoryExists(edgePath); err == nil {
+		browsers = append(browsers, browserInfo{
+			name:      "Edge",
+			directory: edgePath,
 		})
 	}
 
@@ -188,6 +333,7 @@ func printNoBrowsersFound() {
 	fmt.Println("\nSupported browsers:")
 	fmt.Println("  • Google Chrome")
 	fmt.Println("  • Brave Browser")
+	fmt.Println("  • Microsoft Edge")
 	fmt.Println("\nMake sure at least one of these browsers is installed and has been run.")
 	
 	// Show expected paths for debugging
@@ -198,6 +344,7 @@ func printNoBrowsersFound() {
 	case "darwin":
 		fmt.Printf("  Chrome: %s\n", filepath.Join(homeDir, "Library", "Application Support", "Google", "Chrome"))
 		fmt.Printf("  Brave:  %s\n", filepath.Join(homeDir, "Library", "Application Support", "BraveSoftware", "Brave-Browser"))
+		fmt.Printf("  Edge:   %s\n", filepath.Join(homeDir, "Library", "Application Support", "Microsoft Edge"))
 	case "windows":
 		localAppData := os.Getenv("LOCALAPPDATA")
 		if localAppData == "" {
@@ -205,9 +352,11 @@ func printNoBrowsersFound() {
 		}
 		fmt.Printf("  Chrome: %s\n", filepath.Join(localAppData, "Google", "Chrome", "User Data"))
 		fmt.Printf("  Brave:  %s\n", filepath.Join(localAppData, "BraveSoftware", "Brave-Browser", "User Data"))
+		fmt.Printf("  Edge:   %s\n", filepath.Join(localAppData, "Microsoft", "Edge", "User Data"))
 	case "linux":
 		fmt.Printf("  Chrome: %s\n", filepath.Join(homeDir, ".config", "google-chrome"))
 		fmt.Printf("  Brave:  %s\n", filepath.Join(homeDir, ".config", "BraveSoftware", "Brave-Browser"))
+		fmt.Printf("  Edge:   %s\n", filepath.Join(homeDir, ".config", "microsoft-edge"))
 	}
 }
 
@@ -234,9 +383,18 @@ func discoverBrowserProfiles(browserDirectory string) ([]string, error) {
 	return profiles, nil
 }
 
-func buildMaliciousExtensionsMap() map[string]bool {
+func buildMaliciousExtensionsMap(browserName string) map[string]bool {
 	maliciousMap := make(map[string]bool)
-	for _, extensionID := range maliciousExtensions {
+
+	var extensions []string
+	if browserName == "Edge" {
+		extensions = maliciousExtensionsEdge
+	} else {
+		// Chrome and Brave use the same list
+		extensions = maliciousExtensionsChromeBrave
+	}
+
+	for _, extensionID := range extensions {
 		maliciousMap[extensionID] = true
 	}
 	return maliciousMap
@@ -280,11 +438,14 @@ func printAllResults(results []profileScanResult) {
 
 	fmt.Println("Scan Summary:")
 	for browser, count := range browserCounts {
-		fmt.Printf("  • %s: %d profile(s)\n", browser, count)
+		maliciousCount := len(maliciousExtensionsChromeBrave)
+		if browser == "Edge" {
+			maliciousCount = len(maliciousExtensionsEdge)
+		}
+		fmt.Printf("  • %s: %d profile(s) (%d malicious signatures checked)\n", browser, count, maliciousCount)
 	}
 	fmt.Printf("\n📊 Total profiles scanned: %d\n", len(results))
 	fmt.Printf("📦 Total extensions found: %d\n", totalExtensions)
-	fmt.Printf("🛡️  Malicious extensions checked: %d\n\n", len(maliciousExtensions))
 
 	if totalMalicious > 0 {
 		printMaliciousResults(results)
@@ -324,7 +485,10 @@ func printMaliciousResults(results []profileScanResult) {
 func printRemovalInstructions() {
 	fmt.Println("⚡ RECOMMENDED ACTIONS:")
 	fmt.Println("  1. Remove these extensions immediately from your browser")
-	fmt.Println("  2. Go to chrome://extensions (Chrome) or brave://extensions (Brave)")
+	fmt.Println("  2. Go to extensions page in your browser:")
+	fmt.Println("     - Chrome: chrome://extensions")
+	fmt.Println("     - Brave: brave://extensions")
+	fmt.Println("     - Edge: edge://extensions")
 	fmt.Println("  3. Enable 'Developer mode' to see extension IDs")
 	fmt.Println("  4. Remove any extensions matching the IDs above")
 	fmt.Println("  5. Change your passwords across all accounts")
