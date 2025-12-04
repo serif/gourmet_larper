@@ -251,16 +251,36 @@ cd gourmet_larper
 go run main.go
 ```
 
+## For Linux
+
+Open a terminal and run:
+
+```bash
+# Install Git and Go (Ubuntu/Debian)
+sudo apt update
+sudo apt install git golang-go
+
+# Or for Fedora/RHEL
+sudo dnf install git golang
+
+# Clone and run
+cd ~/Downloads
+git clone https://github.com/soniah/gourmet_larper.git
+cd gourmet_larper
+go run main.go
+```
+
 ## Limitations
 
 - Only supports Chrome and Brave (not Edge or other Chromium browsers)
 - Requires browsers to have been run at least once to create profile directories
-- Mac only (this version doesn't support Windows or Linux)
+- Windows and Linux support is experimental; primarily tested on macOS
+- Linux: Browser paths may vary by distribution; Snap installations use different paths
 
 ## How It Works
 
 The scanner:
-1. Detects Chrome and Brave installations on your Mac
+1. Detects Chrome and Brave installations on your system (macOS, Windows, or Linux)
 2. Discovers all profiles within each browser (Default, Profile 1, Profile 2, etc.)
 3. Reads the extensions folder for each profile
 4. Gets the unique ID of each installed extension
@@ -291,7 +311,7 @@ A: The scanner automatically detects and scans all profiles in both Chrome and B
 A: Currently only Chrome and Brave are supported. Support for additional browsers could be added in the future.
 
 **Q: Does this work on Windows or Linux?**
-A: No, this version is Mac-only. The browser extensions paths are different on other operating systems.
+A: Yes! The scanner now supports macOS, Windows, and Linux. See the platform-specific installation instructions above. Note that Windows and Linux support is experimental and primarily tested on macOS.
 
 **Q: The extensions were already removed from Chrome Web Store. Am I safe?**
 A: Not necessarily! If you installed them before they were removed, they may still be on your computer. Run this scanner to check.

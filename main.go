@@ -149,6 +149,9 @@ func discoverBrowsers() ([]browserInfo, error) {
 		chromePath = filepath.Join(localAppData, "Google", "Chrome", "User Data")
 		bravePath = filepath.Join(localAppData, "BraveSoftware", "Brave-Browser", "User Data")
 	case "linux":
+		// Note: Paths vary by distribution and installation method.
+		// Snap installations use different paths (e.g., ~/snap/chromium/).
+		// This covers standard package manager installations.
 		chromePath = filepath.Join(homeDirectory, ".config", "google-chrome")
 		bravePath = filepath.Join(homeDirectory, ".config", "BraveSoftware", "Brave-Browser")
 	default:
